@@ -111,6 +111,36 @@ docker compose exec marko python manage.py createsuperuser --noinput 2>/dev/null
     && success "Superutilisateur « ${DJANGO_SUPERUSER_USERNAME:-admin} » créé." \
     || warn "Le superutilisateur existe déjà ou DJANGO_SUPERUSER_* non définis — aucune action."
 
+# ── Compte de service Kong Gateway ───────────────────────────────────────────
+info "Création du compte de service Kong Gateway..."
+
+if [[ -z "${GATEWAY_SERVICE_PASSWORD:-}" ]] || [[ "$GATEWAY_SERVICE_PASSWORD" == "changeme-"* ]]; then
+    warn "GATEWAY_SERVICE_PASSWORD non défini ou non modifié dans .env — compte 'gateway' non créé."
+    warn "→ Définissez GATEWAY_SERVICE_PASSWORD dans .env pour le créer automatiquement."
+else
+    result=$(docker compose exec -e GATEWAY_PASS="${GATEWAY_SERVICE_PASSWORD}" marko \
+        python manage.py shell -c "
+import os
+from django.contrib.auth.models import User
+pwd = os.environ.get('GATEWAY_PASS', '')
+if not User.objects.filter(username='gateway').exists():
+    User.objects.create_user('gateway', password=pwd)
+    print('created')
+else:
+    u = User.objects.get(username='gateway')
+    u.set_password(pwd)
+    u.save()
+    print('updated')
+" 2>/dev/null || echo "error")
+    if [[ "$result" == *"created"* ]]; then
+        success "Compte 'gateway' créé."
+    elif [[ "$result" == *"updated"* ]]; then
+        success "Compte 'gateway' mis à jour (mot de passe synchronisé)."
+    else
+        warn "Impossible de créer le compte 'gateway'. Vérifiez les logs : docker compose logs marko"
+    fi
+fi
+
 # ── Résumé ────────────────────────────────────────────────────────────────────
 HOST_PORT="${HOST_PORT:-8003}"
 echo ""
