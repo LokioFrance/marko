@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# Environnement virtuel
+venv/
+.venv/
+env/
+
+# Django
+*.sqlite3
+/marko/data/
+/marko/static/
+/marko/media/
+/marko/staticfiles/
+
+# Logs
+*.log
+honeypot.log
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+*.env
+
+# Other
+todo
+.ruff_cache/
