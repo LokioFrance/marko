@@ -31,6 +31,8 @@ services:
       MCP_PORT: "${MCP_PORT:-9000}"
       MCP_API_KEY: "${MCP_API_KEY:-}"
       HONEYPOT_API_KEY: "${HONEYPOT_API_KEY:-}"
+      FASTMCP_HOST: "0.0.0.0"
+      FASTMCP_PORT: "${MCP_PORT:-9000}"
     ports:
       - "${MCP_HOST_PORT:-9005}:9000"
     depends_on:
