@@ -186,4 +186,4 @@ def get_honeypot_attempts() -> list:
 # ── Entrée ────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    mcp.run(transport="sse", host="0.0.0.0", port=MCP_PORT)
+    mcp.run(transport="sse")
